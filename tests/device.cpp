@@ -8,14 +8,18 @@ ComPtr<IDxcCompiler> gDxcCompiler;
 
 int InitializeD3D12()
 {
+    //
     // Enable debug layer
+    //
     HRESULT hr = D3D12GetDebugInterface(__uuidof(ID3D12Debug), &gDebug);
     if (FAILED(hr)) {
         return EXIT_FAILURE;
     }
     gDebug->EnableDebugLayer();
 
+    //
     // Enable experimental shader models in case we're on an old version of Windows
+    //
     UUID experimentalFeatures[] = {
         D3D12ExperimentalShaderModels,
     };
@@ -24,20 +28,26 @@ int InitializeD3D12()
         return EXIT_FAILURE;
     }
 
+    //
     // Create device using first adapter
+    //
     ComPtr<ID3D12Device5> device;
     hr = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&gDevice));
     if (FAILED(hr)) {
         return EXIT_FAILURE;
     }
 
+    //
     // Create DXC library
+    //
     hr = DxcCreateInstance(CLSID_DxcLibrary, __uuidof(IDxcLibrary), &gDxcLibrary);
     if (FAILED(hr)) {
         return EXIT_FAILURE;
     }
 
+    //
     // Create DXC compiler
+    //
     hr = DxcCreateInstance(CLSID_DxcCompiler, __uuidof(IDxcCompiler), &gDxcCompiler);
     if (FAILED(hr)) {
         return EXIT_FAILURE;
@@ -57,8 +67,8 @@ HRESULT CompileShader(
         return E_FAIL;
     }
 
-    // Clear error msg so there isn't any confusion if
-    // it's getting resused.
+    //
+    // Clear error msg so there isn't any confusion if it's getting reused.
     //
     if (pErrorMsg != nullptr) {
         pErrorMsg->clear();
